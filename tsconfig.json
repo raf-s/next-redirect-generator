@@ -1,0 +1,9 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "module": "NodeNext",
+    "outDir": "dist",
+  },
+  "include": ["index.ts"]
+}

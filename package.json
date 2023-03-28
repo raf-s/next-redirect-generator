@@ -1,0 +1,22 @@
+{
+  "name": "nextjs-to-netlify-redirect-exporter",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "repository": "git@github.com:raf-s/nextjs-to-netlify-redirect-exporter.git",
+  "author": "Raf Sz. <raf.sz@icloud.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "generate": "ts-node --esm index.ts",
+    "build": "tsc"
+  },
+  "bin": {
+    "nextjs-to-netlify-redirect-exporter": "dist/cli.js"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.10",
+    "prettier": "^2.8.7",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2"
+  }
+}
