@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import {runCli} from './index.js';
 
-runCli()
+const cwd = process.cwd();
+
+runCli(cwd)
     .then(returnCode => {
         process.exit(returnCode);
     })

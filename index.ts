@@ -1,13 +1,11 @@
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
+import fs from "fs";
 
-export async function runCli() {
-  const walk = function (dir) {
+export async function runCli(cwd: string) {
+  const walk = function(dir) {
     let results = [];
     const list = fs.readdirSync(dir);
-    list.forEach(function (file) {
-      file = dir + '/' + file;
+    list.forEach(function(file) {
+      file = dir + "/" + file;
       const stat = fs.statSync(file);
       if (stat && stat.isDirectory()) {
         /* Recurse into a subdirectory */
@@ -20,10 +18,7 @@ export async function runCli() {
     return results;
   };
 
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-
-  const pagesFolder = path.join(__dirname, '../pages');
+  const pagesFolder = cwd + "/pages";
   const pathRegex = /(?<=pages\/)(.*)(?=.tsx)/gm;
 
   type Redirect = {
@@ -36,7 +31,7 @@ export async function runCli() {
 
   walk(pagesFolder).forEach((f) => {
     // If not a dynamic route.
-    if (!f.includes('[')) {
+    if (!f.includes("[")) {
       return;
     }
     let pathsRegexRes;
@@ -59,16 +54,16 @@ export async function runCli() {
       }
 
       const fromPathParts = [];
-      dynamicPage.split('/').forEach((p) => {
-        if (p === 'index') {
+      dynamicPage.split("/").forEach((p) => {
+        if (p === "index") {
           return;
         }
         const pathArgIndex = results.findIndex((res) => res === p);
         const pathArg = results[pathArgIndex];
 
         if (pathArg) {
-          const pathArgStrippedOfBrackets = pathArg.replace(/(\[|\])/gm, '');
-          if(pathArgStrippedOfBrackets.includes("...")) {
+          const pathArgStrippedOfBrackets = pathArg.replace(/(\[|\])/gm, "");
+          if (pathArgStrippedOfBrackets.includes("...")) {
             // Wildcard route, replace with "*"
             p = "*";
           } else {
@@ -77,33 +72,48 @@ export async function runCli() {
         }
         fromPathParts.push(p);
       });
-      const fromPath = '/' + fromPathParts.join('/');
+      const fromPath = "/" + fromPathParts.join("/");
 
       // Process toPath
       const toPathParts = [];
-      dynamicPage.split('/').forEach((p) => {
-        if (p === 'index') {
+      dynamicPage.split("/").forEach((p) => {
+        if (p === "index") {
           return;
         }
         toPathParts.push(p);
       });
-      const toPath = '/' + toPathParts.join('/') + '.html';
+      const toPath = "/" + toPathParts.join("/") + ".html";
 
       redirects.push({
         fromPath,
         toPath,
-        status: 200,
+        status: 200
       });
     }
   });
 
-// console.log(`
-// [[redirects]]
-//   from = "${fromPath}"
-//   to = "${toPath}"
-//   status = 200
-//     `)
+// Sorting wildcard redirects. Top level wildcard ("/*") should be the last redirect.
+  redirects.sort((a, b) => {
+    const isTopLevelWildcard = (str: string) => str.startsWith("/[...");
+    const isWildcard = (str: string) => str.includes("/[...");
 
-// @todo: Now we have to sort our wildcards
-  console.log({ redirects });
+    if (isWildcard(a.toPath) && !isWildcard(b.toPath)) {
+      return 1;
+    }
+    if (!isWildcard(a.toPath) && isWildcard(b.toPath)) {
+      return -1;
+    }
+    if (isTopLevelWildcard(a.fromPath) || isTopLevelWildcard(b.toPath)) {
+      return -1;
+    }
+    return 0;
+  });
+
+  redirects.forEach(r => (
+    console.log(`
+[[redirects]]
+from = "${r.fromPath}"
+to = "${r.toPath}"
+status = 200`)
+  ));
 }

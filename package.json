@@ -1,6 +1,6 @@
 {
   "name": "nextjs-to-netlify-redirect-exporter",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "main": "index.ts",
   "repository": "git@github.com:raf-s/nextjs-to-netlify-redirect-exporter.git",
   "author": "Raf Sz. <raf.sz@icloud.com>",
