@@ -1,42 +1,48 @@
 import { readdirSync, statSync } from "fs";
 
-export async function runCli(cwd: string) {
-  const walk = function(dir: string) {
-    let results: string[] = [];
-    const list = readdirSync(dir);
-    list.forEach(function(file) {
-      file = dir + "/" + file;
-      const stat = statSync(file);
-      if (stat && stat.isDirectory()) {
-        /* Recurse into a subdirectory */
-        results = results.concat(walk(file));
-      } else {
-        /* Is a file */
-        results.push(file);
-      }
-    });
-    return results;
-  };
+type Redirect = {
+  fromPath: string;
+  fromPathParts: string[];
+  toPath: string;
+  toPathParts: string[];
+  status: number;
+};
 
+const walk = function(dir: string) {
+  let results: string[] = [];
+  const list = readdirSync(dir);
+  list.forEach(function(file) {
+    file = dir + "/" + file;
+    const stat = statSync(file);
+    if (stat && stat.isDirectory()) {
+      /* Recurse into a subdirectory */
+      results = results.concat(walk(file));
+    } else {
+      /* Is a file */
+      results.push(file);
+    }
+  });
+  return results;
+};
+
+const isDynamicPath = (path: string) => path.includes("[");
+const isTopLevelWildcard = (redirect: Redirect) => redirect.toPath.startsWith("/[...");
+const isWildcard = (redirect: Redirect) => redirect.toPath.includes("/[...");
+
+export async function runCli(cwd: string) {
   const pagesFolder = cwd + "/pages";
   const pathRegex = /(?<=pages\/)(.*)(?=.tsx)/gm;
 
-  type Redirect = {
-    fromPath: string;
-    toPath: string;
-    status: number;
-  };
-
   const redirects: Redirect[] = [];
 
-  walk(pagesFolder).forEach((f) => {
+  walk(pagesFolder).forEach((file) => {
     // If not a dynamic route, return as we don't want redirects for static routes.
-    if (!f.includes("[")) {
+    if (!isDynamicPath(file)) {
       return;
     }
     let pathsRegexRes;
 
-    while ((pathsRegexRes = pathRegex.exec(f)) !== null) {
+    while ((pathsRegexRes = pathRegex.exec(file)) !== null) {
       const dynamicPage = pathsRegexRes[0];
       const results: string[] = [];
 
@@ -86,24 +92,41 @@ export async function runCli(cwd: string) {
 
       redirects.push({
         fromPath,
+        fromPathParts,
         toPath,
+        toPathParts,
         status: 200
       });
     }
   });
 
-// Sorting wildcard redirects. Top level wildcard ("/*") should be the last redirect.
+// Sorting redirects most specific to least specific.
   redirects.sort((a, b) => {
-    const isTopLevelWildcard = (str: string) => str.startsWith("/[...");
-    const isWildcard = (str: string) => str.includes("/[...");
-
-    if (isWildcard(a.toPath) && !isWildcard(b.toPath)) {
+    if (isTopLevelWildcard(a) && !isTopLevelWildcard(b)) {
       return 1;
     }
-    if (!isWildcard(a.toPath) && isWildcard(b.toPath)) {
+    if (!isTopLevelWildcard(a) && isTopLevelWildcard(b)) {
       return -1;
     }
-    if (isTopLevelWildcard(a.fromPath) || isTopLevelWildcard(b.toPath)) {
+    if (isWildcard(a) && !isWildcard(b)) {
+      return 1;
+    }
+    if (!isWildcard(a) && isWildcard(b)) {
+      return -1;
+    }
+    if (a.toPathParts.length > b.toPathParts.length) {
+      return -1;
+    }
+    if (a.toPathParts.length < b.toPathParts.length) {
+      return 1;
+    }
+    const aToPathLastPart = a.toPathParts[a.toPathParts.length - 1];
+    const bToPathLastPart = b.toPathParts[b.toPathParts.length - 1];
+
+    if (isDynamicPath(aToPathLastPart) && !isDynamicPath(bToPathLastPart)) {
+      return 1;
+    }
+    if (!isDynamicPath(aToPathLastPart) && isDynamicPath(bToPathLastPart)) {
       return -1;
     }
     return 0;
