@@ -1,12 +1,12 @@
-import fs from "fs";
+import { readdirSync, statSync } from "fs";
 
 export async function runCli(cwd: string) {
-  const walk = function(dir) {
-    let results = [];
-    const list = fs.readdirSync(dir);
+  const walk = function(dir: string) {
+    let results: string[] = [];
+    const list = readdirSync(dir);
     list.forEach(function(file) {
       file = dir + "/" + file;
-      const stat = fs.statSync(file);
+      const stat = statSync(file);
       if (stat && stat.isDirectory()) {
         /* Recurse into a subdirectory */
         results = results.concat(walk(file));
@@ -30,15 +30,15 @@ export async function runCli(cwd: string) {
   const redirects: Redirect[] = [];
 
   walk(pagesFolder).forEach((f) => {
-    // If not a dynamic route.
+    // If not a dynamic route, return as we don't want redirects for static routes.
     if (!f.includes("[")) {
       return;
     }
     let pathsRegexRes;
 
     while ((pathsRegexRes = pathRegex.exec(f)) !== null) {
-      let dynamicPage = pathsRegexRes[0];
-      let results = [];
+      const dynamicPage = pathsRegexRes[0];
+      const results: string[] = [];
 
       // Process fromPath
       const replaceSquareBracketsWithColonRegex = /\[(.*?)\]/gm;
@@ -47,13 +47,13 @@ export async function runCli(cwd: string) {
         (replaceSquareBracketsWithColonRegexRes =
           replaceSquareBracketsWithColonRegex.exec(dynamicPage)) !== null
         ) {
-        let result = replaceSquareBracketsWithColonRegexRes[0];
+        const result = replaceSquareBracketsWithColonRegexRes[0];
         if (result) {
           results.push(result);
         }
       }
 
-      const fromPathParts = [];
+      const fromPathParts: string[] = [];
       dynamicPage.split("/").forEach((p) => {
         if (p === "index") {
           return;
@@ -75,7 +75,7 @@ export async function runCli(cwd: string) {
       const fromPath = "/" + fromPathParts.join("/");
 
       // Process toPath
-      const toPathParts = [];
+      const toPathParts: string[] = [];
       dynamicPage.split("/").forEach((p) => {
         if (p === "index") {
           return;
