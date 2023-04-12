@@ -9,7 +9,7 @@ from = "/:yourVariable
 to = "/[yourVariable].html"
 status = 200
 ```
-This tool will autogenerate those for you and spit them out in the console for you to copy into your Netlify.toml file - for convenience and to eliminate human error.
+This tool will autogenerate those and spit them out in the console for you to copy into your Netlify.toml file - for convenience and to eliminate human error.
 
 ### How to run
 Execute using NPX: `npx nextjs-to-netlify-redirect-exporter`
