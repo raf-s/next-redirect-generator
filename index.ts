@@ -29,7 +29,10 @@ const isDynamicPath = (path: string) => path.includes("[");
 const isTopLevelWildcard = (redirect: Redirect) => redirect.toPath.startsWith("/[...");
 const isWildcard = (redirect: Redirect) => redirect.toPath.includes("/[...");
 
-export async function runCli(cwd: string, format: 'netlify.toml' | '_redirects') {
+export async function runCli(cwd?: string, format?: 'netlify.toml' | '_redirects') {
+  if(!cwd) {
+    throw new Error('cwd is undefined');
+  }
   const pagesFolder = cwd + "/pages";
   const pathRegex = /(?<=pages\/)(.*)(?=.tsx)/gm;
 
@@ -131,6 +134,11 @@ export async function runCli(cwd: string, format: 'netlify.toml' | '_redirects')
     }
     return 0;
   });
+
+  console.log(`[ Generating redirects from: ${pagesFolder} ]`, format ? `format: ${format}` : '');
+  if(redirects.length === 0) {
+    console.log('No dynamic routes found.')
+  }
 
   if (format === "_redirects") {
     redirects.forEach(r => (
