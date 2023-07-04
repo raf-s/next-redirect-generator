@@ -1,4 +1,4 @@
-import { readdirSync, statSync } from "fs";
+import {readdirSync, statSync} from "fs";
 
 type Redirect = {
   fromPath: string;
@@ -8,10 +8,10 @@ type Redirect = {
   status: number;
 };
 
-const walk = function(dir: string) {
+const walk = function (dir: string) {
   let results: string[] = [];
   const list = readdirSync(dir);
-  list.forEach(function(file) {
+  list.forEach(function (file) {
     file = dir + "/" + file;
     const stat = statSync(file);
     if (stat && stat.isDirectory()) {
@@ -29,7 +29,7 @@ const isDynamicPath = (path: string) => path.includes("[");
 const isTopLevelWildcard = (redirect: Redirect) => redirect.toPath.startsWith("/[...");
 const isWildcard = (redirect: Redirect) => redirect.toPath.includes("/[...");
 
-export async function runCli(cwd: string) {
+export async function runCli(cwd: string, format: 'netlify.toml' | '_redirects') {
   const pagesFolder = cwd + "/pages";
   const pathRegex = /(?<=pages\/)(.*)(?=.tsx)/gm;
 
@@ -132,11 +132,18 @@ export async function runCli(cwd: string) {
     return 0;
   });
 
-  redirects.forEach(r => (
-    console.log(`
+  if (format === "_redirects") {
+    redirects.forEach(r => (
+      console.log(`${r.fromPath} ${r.toPath} 200`)
+    ));
+
+  } else {
+    redirects.forEach(r => (
+      console.log(`
 [[redirects]]
 from = "${r.fromPath}"
 to = "${r.toPath}"
 status = 200`)
-  ));
+    ));
+  }
 }

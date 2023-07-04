@@ -1,10 +1,16 @@
 {
   "name": "nextjs-to-netlify-redirect-exporter",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "main": "index.ts",
   "repository": "git@github.com:raf-s/nextjs-to-netlify-redirect-exporter.git",
   "description": "CLI tool to generate netlify.toml redirects from Next.js dynamic routes in pages folder.",
-  "keywords": ["next.js", "ssg", "netlify", "redirect", "dynamic routes"],
+  "keywords": [
+    "next.js",
+    "ssg",
+    "netlify",
+    "redirect",
+    "dynamic routes"
+  ],
   "author": "Raf Sz. <raf.sz@icloud.com>",
   "license": "MIT",
   "type": "module",
@@ -17,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.15.10",
+    "@types/yargs": "^17.0.24",
     "@typescript-eslint/eslint-plugin": "^5.57.0",
     "@typescript-eslint/parser": "^5.57.0",
     "eslint": "^8.37.0",
@@ -24,5 +31,8 @@
     "prettier": "^2.8.7",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.2"
+  },
+  "dependencies": {
+    "yargs": "^17.7.2"
   }
 }
