@@ -1,6 +1,6 @@
 {
   "name": "nextjs-to-netlify-redirect-exporter",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "main": "index.ts",
   "repository": "git@github.com:raf-s/nextjs-to-netlify-redirect-exporter.git",
   "description": "CLI tool to generate netlify.toml redirects from Next.js dynamic routes in pages folder.",

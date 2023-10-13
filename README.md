@@ -20,3 +20,20 @@ Install `yarn add -D nextjs-to-netlify-redirect-exporter` &
 `yarn run nextjs-to-netlify-redirect-exporter`
 
 Run the command in the root of your Next.js project - the script looks for a `pages` folder in your current working directory.
+
+### Examples
+
+1. _redirects file format (stick in your `public` folder).
+
+`yarn run nextjs-to-netlify-redirect-exporter --format="_redirect"`
+
+2. Netlify.toml file format.
+
+`yarn run nextjs-to-netlify-redirect-exporter --format="netlify.toml"`
+
+3. Alternate `pages` directory.
+
+`yarn run nextjs-to-netlify-redirect-exporter --path="/src/pages"` else it will look at the closes `pages` folder in your CWD.
+
+### Important
+Run this at your repo root.

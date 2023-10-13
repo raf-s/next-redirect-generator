@@ -1,4 +1,4 @@
-import { readdirSync, statSync } from "fs";
+import {readdirSync, statSync} from "fs";
 
 type Redirect = {
   fromPath: string;
@@ -8,10 +8,10 @@ type Redirect = {
   status: number;
 };
 
-const walk = function(dir: string) {
+const walk = function (dir: string) {
   let results: string[] = [];
   const list = readdirSync(dir);
-  list.forEach(function(file) {
+  list.forEach(function (file) {
     file = dir + "/" + file;
     const stat = statSync(file);
     if (stat && stat.isDirectory()) {
@@ -29,11 +29,17 @@ const isDynamicPath = (path: string) => path.includes("[");
 const isTopLevelWildcard = (redirect: Redirect) => redirect.toPath.startsWith("/[...");
 const isWildcard = (redirect: Redirect) => redirect.toPath.includes("/[...");
 
-export async function runCli(cwd?: string, format?: "netlify.toml" | "_redirects") {
-  if (!cwd) {
-    throw new Error("cwd is undefined");
+type RunCliArgs = {
+  cwd?: string;
+  format?: "netlify.toml" | "_redirects";
+  path?: string;
+}
+
+export async function runCli(args: RunCliArgs) {
+  if (!args.cwd) {
+    throw new Error("args.cwd is undefined");
   }
-  const pagesFolder = cwd + "/pages";
+  const pagesFolder = args.path ? `${args.cwd}/${args.path}` : `${args.cwd}/pages`;
   const pathRegex = /(?<=pages\/)(.*)(?=.tsx)/gm;
 
   const redirects: Redirect[] = [];
@@ -135,12 +141,12 @@ export async function runCli(cwd?: string, format?: "netlify.toml" | "_redirects
     return 0;
   });
 
-  console.log(`[ Generating redirects from: ${pagesFolder} ]`, format ? `format: ${format}` : "");
+  console.log(`[ Generating redirects from: ${pagesFolder} ]`, args.format ? `format: ${args.format}` : "");
   if (redirects.length === 0) {
     console.log("No dynamic routes found.");
   }
 
-  if (format === "_redirects") {
+  if (args.format === "_redirects") {
     redirects.forEach(r => (
       console.log(`${r.fromPath} ${r.toPath} 200`)
     ));
@@ -148,10 +154,10 @@ export async function runCli(cwd?: string, format?: "netlify.toml" | "_redirects
   } else {
     redirects.forEach(r => (
       console.log(`
-[[redirects]]
-from = "${r.fromPath}"
-to = "${r.toPath}"
-status = 200`)
+        [[redirects]]
+        from = "${r.fromPath}"
+        to = "${r.toPath}"
+        status = 200`)
     ));
   }
 }
