@@ -1,4 +1,5 @@
 import {readdirSync, statSync} from "fs";
+import path from "path";
 
 type Redirect = {
   fromPath: string;
@@ -39,7 +40,7 @@ export async function runCli(args: RunCliArgs) {
   if (!args.cwd) {
     throw new Error("args.cwd is undefined");
   }
-  const pagesFolder = args.path ? `${args.cwd}/${args.path}` : `${args.cwd}/pages`;
+  const pagesFolder = path.resolve(args.cwd, args.path || "pages");
   const pathRegex = /(?<=pages\/)(.*)(?=.tsx)/gm;
 
   const redirects: Redirect[] = [];
