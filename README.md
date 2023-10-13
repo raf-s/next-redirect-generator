@@ -33,7 +33,7 @@ Run the command in the root of your Next.js project - the script looks for a `pa
 
 3. Alternate `pages` directory.
 
-`yarn run nextjs-to-netlify-redirect-exporter --path="/src/pages"` else it will look at the closes `pages` folder in your CWD.
+`yarn run nextjs-to-netlify-redirect-exporter --path="src/pages"` else it will look at the closes `pages` folder in your CWD.
 
 ### Important
 Run this at your repo root.
