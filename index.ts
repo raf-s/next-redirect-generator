@@ -153,7 +153,7 @@ export async function runCli(args: RunCliArgs) {
 
   if (args.format === "_redirects") {
     redirects.forEach(r => {
-      result += `${r.fromPath} ${r.toPath} ${r.status}`;
+      result += `${r.fromPath} ${r.toPath} ${r.status}` + "\n";
     });
   } else if (args.format === "json") {
     const res: Array<{ from: string, to: string, status: number }> = redirects.map(redirect => ({
@@ -163,13 +163,14 @@ export async function runCli(args: RunCliArgs) {
     }));
     result = JSON.stringify(res, null, "  ");
   } else {
-    redirects.forEach(r => {
-      result += `[[redirects]]
+    const res = redirects.map(r => {
+      return `[[redirects]]
 from = "${r.fromPath}"
 to = "${r.toPath}"
 status = ${r.status}
 `;
     });
+    result = res.join("\n")
   }
 
   if (args.output) {
