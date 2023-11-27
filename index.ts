@@ -1,4 +1,4 @@
-import {readdirSync, statSync} from "fs";
+import { readdirSync, statSync, writeFileSync } from "fs";
 import path from "path";
 
 type Redirect = {
@@ -9,10 +9,10 @@ type Redirect = {
   status: number;
 };
 
-const walk = function (dir: string) {
+const walk = function(dir: string) {
   let results: string[] = [];
   const list = readdirSync(dir);
-  list.forEach(function (file) {
+  list.forEach(function(file) {
     file = dir + "/" + file;
     const stat = statSync(file);
     if (stat && stat.isDirectory()) {
@@ -32,8 +32,9 @@ const isWildcard = (redirect: Redirect) => redirect.toPath.includes("/[...");
 
 type RunCliArgs = {
   cwd?: string;
-  format?: "netlify.toml" | "_redirects";
+  format?: "netlify.toml" | "_redirects" | "json";
   path?: string;
+  output?: string;
 }
 
 export async function runCli(args: RunCliArgs) {
@@ -142,23 +143,38 @@ export async function runCli(args: RunCliArgs) {
     return 0;
   });
 
-  console.log(`[ Generating redirects from: ${pagesFolder} ]`, args.format ? `format: ${args.format}` : "");
+  console.log(`[ Generating redirects from: ${pagesFolder} to ${args.output || "console"} ]`, args.format ? `format: ${args.format}` : "");
   if (redirects.length === 0) {
-    console.log("No dynamic routes found.");
+    console.warn("No dynamic routes found.");
+    return;
   }
 
-  if (args.format === "_redirects") {
-    redirects.forEach(r => (
-      console.log(`${r.fromPath} ${r.toPath} 200`)
-    ));
+  let result = "";
 
+  if (args.format === "_redirects") {
+    redirects.forEach(r => {
+      result += `${r.fromPath} ${r.toPath} ${r.status}`;
+    });
+  } else if (args.format === "json") {
+    const res: Array<{ from: string, to: string, status: number }> = redirects.map(redirect => ({
+      from: redirect.fromPath,
+      to: redirect.toPath,
+      status: redirect.status
+    }));
+    result = JSON.stringify(res, null, "  ");
   } else {
-    redirects.forEach(r => (
-      console.log(`
-        [[redirects]]
-        from = "${r.fromPath}"
-        to = "${r.toPath}"
-        status = 200`)
-    ));
+    redirects.forEach(r => {
+      result += `[[redirects]]
+from = "${r.fromPath}"
+to = "${r.toPath}"
+status = ${r.status}
+`;
+    });
+  }
+
+  if (args.output) {
+    writeFileSync(args.output, result);
+  } else {
+    process.stdout.write(result);
   }
 }
