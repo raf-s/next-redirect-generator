@@ -1,5 +1,5 @@
-import { readdirSync, statSync, writeFileSync } from "fs";
-import path from "path";
+import { readdirSync, statSync, writeFileSync } from 'fs';
+import path from 'path';
 
 type Redirect = {
   fromPath: string;
@@ -13,7 +13,7 @@ const walk = function(dir: string) {
   let results: string[] = [];
   const list = readdirSync(dir);
   list.forEach(function(file) {
-    file = dir + "/" + file;
+    file = dir + '/' + file;
     const stat = statSync(file);
     if (stat && stat.isDirectory()) {
       /* Recurse into a subdirectory */
@@ -26,23 +26,23 @@ const walk = function(dir: string) {
   return results;
 };
 
-const isDynamicPath = (path: string) => path.includes("[");
-const isTopLevelWildcard = (redirect: Redirect) => redirect.toPath.startsWith("/[...");
-const isWildcard = (redirect: Redirect) => redirect.toPath.includes("/[...");
+const isDynamicPath = (path: string) => path.includes('[');
+const isTopLevelWildcard = (redirect: Redirect) => redirect.toPath.startsWith('/[...');
+const isWildcard = (redirect: Redirect) => redirect.toPath.includes('/[...');
 
 type RunCliArgs = {
   cwd?: string;
-  format?: "netlify.toml" | "_redirects" | "json";
+  format?: 'netlify.toml' | '_redirects' | 'json';
   path?: string;
   output?: string;
 }
 
 export async function runCli(args: RunCliArgs) {
   if (!args.cwd) {
-    throw new Error("args.cwd is undefined");
+    throw new Error('args.cwd is undefined');
   }
-  const pagesFolder = path.resolve(args.cwd, args.path || "pages");
-  const pathRegex = /(?<=pages\/)(.*)(?=.tsx)/gm;
+  const pagesFolder = path.resolve(args.cwd, args.path || 'pages');
+  const pathRegex = /(?<=pages\/)(.*)(?=.tsx|jsx)/gm;
 
   const redirects: Redirect[] = [];
 
@@ -51,7 +51,7 @@ export async function runCli(args: RunCliArgs) {
     if (!isDynamicPath(file)) {
       return;
     }
-    let pathsRegexRes;
+    let pathsRegexRes: RegExpExecArray;
 
     while ((pathsRegexRes = pathRegex.exec(file)) !== null) {
       const dynamicPage = pathsRegexRes[0];
@@ -59,7 +59,9 @@ export async function runCli(args: RunCliArgs) {
 
       // Process fromPath
       const replaceSquareBracketsWithColonRegex = /\[(.*?)\]/gm;
-      let replaceSquareBracketsWithColonRegexRes;
+
+      let replaceSquareBracketsWithColonRegexRes: RegExpExecArray;
+
       while (
         (replaceSquareBracketsWithColonRegexRes =
           replaceSquareBracketsWithColonRegex.exec(dynamicPage)) !== null
@@ -71,42 +73,42 @@ export async function runCli(args: RunCliArgs) {
       }
 
       const fromPathParts: string[] = [];
-      dynamicPage.split("/").forEach((p) => {
-        if (p === "index") {
+      dynamicPage.split('/').forEach((p) => {
+        if (p === 'index') {
           return;
         }
         const pathArgIndex = results.findIndex((res) => res === p);
         const pathArg = results[pathArgIndex];
 
         if (pathArg) {
-          const pathArgStrippedOfBrackets = pathArg.replace(/(\[|\])/gm, "");
-          if (pathArgStrippedOfBrackets.includes("...")) {
+          const pathArgStrippedOfBrackets = pathArg.replace(/(\[|\])/gm, '');
+          if (pathArgStrippedOfBrackets.includes('...')) {
             // Wildcard route, replace with "*"
-            p = "*";
+            p = '*';
           } else {
             p = `:${pathArgStrippedOfBrackets}`;
           }
         }
         fromPathParts.push(p);
       });
-      const fromPath = "/" + fromPathParts.join("/");
+      const fromPath = '/' + fromPathParts.join('/');
 
       // Process toPath
       const toPathParts: string[] = [];
-      dynamicPage.split("/").forEach((p) => {
-        if (p === "index") {
+      dynamicPage.split('/').forEach((p) => {
+        if (p === 'index') {
           return;
         }
         toPathParts.push(p);
       });
-      const toPath = "/" + toPathParts.join("/") + ".html";
+      const toPath = '/' + toPathParts.join('/') + '.html';
 
       redirects.push({
         fromPath,
         fromPathParts,
         toPath,
         toPathParts,
-        status: 200
+        status: 200,
       });
     }
   });
@@ -143,25 +145,25 @@ export async function runCli(args: RunCliArgs) {
     return 0;
   });
 
-  console.log(`[ Generating redirects from: ${pagesFolder} to ${args.output || "console"} ]`, args.format ? `format: ${args.format}` : "");
+  console.log(`[ Generating redirects from: ${pagesFolder} to ${args.output || 'console'} ]`, args.format ? `format: ${args.format}` : '');
   if (redirects.length === 0) {
-    console.warn("No dynamic routes found.");
+    console.warn('No dynamic routes found.');
     return;
   }
 
-  let result = "";
+  let result = '';
 
-  if (args.format === "_redirects") {
+  if (args.format === '_redirects') {
     redirects.forEach(r => {
-      result += `${r.fromPath} ${r.toPath} ${r.status}` + "\n";
+      result += `${r.fromPath} ${r.toPath} ${r.status}` + '\n';
     });
-  } else if (args.format === "json") {
+  } else if (args.format === 'json') {
     const res: Array<{ from: string, to: string, status: number }> = redirects.map(redirect => ({
       from: redirect.fromPath,
       to: redirect.toPath,
-      status: redirect.status
+      status: redirect.status,
     }));
-    result = JSON.stringify(res, null, "  ");
+    result = JSON.stringify(res, null, '  ');
   } else {
     const res = redirects.map(r => {
       return `[[redirects]]
@@ -170,7 +172,7 @@ to = "${r.toPath}"
 status = ${r.status}
 `;
     });
-    result = res.join("\n")
+    result = res.join('\n');
   }
 
   if (args.output) {
