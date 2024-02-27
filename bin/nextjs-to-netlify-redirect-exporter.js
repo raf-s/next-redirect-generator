@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import {runCli} from '../dist/index.js';
+import { runCli } from '../dist/index.js';
 import yargs from 'yargs/yargs';
 
 const cwd = process.cwd();
@@ -10,14 +10,6 @@ const argv = yargs(process.argv.slice(2)).options({
   out: { alias: 'o', string: true },
 }).parseSync();
 
-(async () => {
-  runCli({
-    cwd, format: argv.format, path: argv.path, output: argv.out,
-  })
-    .then(returnCode => {
-      process.exit(returnCode);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-})();
+runCli({
+  cwd, format: argv.format, path: argv.path, output: argv.out,
+});
