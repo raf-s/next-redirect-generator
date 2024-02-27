@@ -1,8 +1,10 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "jsx": "react",
-    "moduleResolution": "node",
     "esModuleInterop": true,
-    "lib": ["es2015", "dom"],
-  },
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowJs": false,
+    "strict": true,
+  }
 }

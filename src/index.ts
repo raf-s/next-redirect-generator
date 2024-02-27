@@ -37,7 +37,7 @@ type RunCliArgs = {
   output?: string;
 }
 
-export async function runCli(args: RunCliArgs) {
+export function runCli(args: RunCliArgs) {
   if (!args.cwd) {
     throw new Error('args.cwd is undefined');
   }
@@ -51,7 +51,7 @@ export async function runCli(args: RunCliArgs) {
     if (!isDynamicPath(file)) {
       return;
     }
-    let pathsRegexRes: RegExpExecArray;
+    let pathsRegexRes
 
     while ((pathsRegexRes = pathRegex.exec(file)) !== null) {
       const dynamicPage = pathsRegexRes[0];
@@ -60,7 +60,7 @@ export async function runCli(args: RunCliArgs) {
       // Process fromPath
       const replaceSquareBracketsWithColonRegex = /\[(.*?)\]/gm;
 
-      let replaceSquareBracketsWithColonRegexRes: RegExpExecArray;
+      let replaceSquareBracketsWithColonRegexRes;
 
       while (
         (replaceSquareBracketsWithColonRegexRes =
