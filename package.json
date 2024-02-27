@@ -1,6 +1,6 @@
 {
   "name": "nextjs-to-netlify-redirect-exporter",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "author": "Raf Sz. <raf.sz@icloud.com>",
   "license": "MIT",
   "main": "src/index.ts",
