@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import {runCli} from "./index.js";
+import {runCli} from "../dist/index";
 import yargs from "yargs/yargs";
 
 const cwd = process.cwd();
