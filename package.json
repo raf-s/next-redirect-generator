@@ -19,7 +19,8 @@
     "dynamic routes"
   ],
   "scripts": {
-    "build": "tsup src/index.ts"
+    "build": "tsup src/index.ts",
+    "dev": "tsup src/index.ts --watch"
   },
   "files": [
     "dist"
