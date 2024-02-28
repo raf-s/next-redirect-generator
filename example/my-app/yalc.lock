@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "nextjs-to-netlify-redirect-exporter": {
+      "signature": "4387c973e760270e315f82df936cf788",
+      "file": true,
+      "replaced": "^1.1.1"
+    }
+  }
+}
