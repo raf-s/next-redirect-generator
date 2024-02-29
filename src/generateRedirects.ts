@@ -1,13 +1,14 @@
 import { readdirSync, statSync } from 'fs';
 
 const pathRegex = /(?<=pages\/)(.*)(?=.tsx|jsx)/gm;
+const replaceSquareBracketsWithColonRegex = /\[(.*?)\]/gm;
 
 export type RedirectFormat = 'netlify.toml' | '_redirects' | 'json';
 
-export const walk = function(dir: string) {
+const walk = function (dir: string) {
   let results: string[] = [];
   const list = readdirSync(dir);
-  list.forEach(function(file) {
+  list.forEach(function (file) {
     file = dir + '/' + file;
     const stat = statSync(file);
     if (stat && stat.isDirectory()) {
@@ -21,11 +22,10 @@ export const walk = function(dir: string) {
   return results;
 };
 
-export const isDynamicPath = (path: string) => path.includes('[');
-
-export const isTopLevelWildcard = (redirect: Redirect) => redirect.toPath.startsWith('/[...');
-
-export const isWildcard = (redirect: Redirect) => redirect.toPath.includes('/[...');
+const isDynamicPath = (path: string) => path.includes('[');
+const isTopLevelWildcard = (redirect: Redirect) =>
+  redirect.toPath.startsWith('/[...');
+const isWildcard = (redirect: Redirect) => redirect.toPath.includes('/[...');
 
 type Redirect = {
   fromPath: string;
@@ -35,7 +35,10 @@ type Redirect = {
   status: number;
 };
 
-export const generateRedirects = (path: string, format: RedirectFormat) => {
+export const generateRedirects = (
+  path: string,
+  format: RedirectFormat,
+): string => {
   const redirects: Redirect[] = [];
 
   walk(path).forEach((file) => {
@@ -50,14 +53,12 @@ export const generateRedirects = (path: string, format: RedirectFormat) => {
       const results: string[] = [];
 
       // Process fromPath
-      const replaceSquareBracketsWithColonRegex = /\[(.*?)\]/gm;
-
       let replaceSquareBracketsWithColonRegexRes;
 
       while (
         (replaceSquareBracketsWithColonRegexRes =
           replaceSquareBracketsWithColonRegex.exec(dynamicPage)) !== null
-        ) {
+      ) {
         const result = replaceSquareBracketsWithColonRegexRes[0];
         if (result) {
           results.push(result);
@@ -105,7 +106,7 @@ export const generateRedirects = (path: string, format: RedirectFormat) => {
     }
   });
 
-// Sorting redirects most specific to least specific.
+  // Sorting redirects most specific to least specific.
   redirects.sort((a, b) => {
     if (isTopLevelWildcard(a) && !isTopLevelWildcard(b)) {
       return 1;
@@ -140,18 +141,19 @@ export const generateRedirects = (path: string, format: RedirectFormat) => {
   let result = '';
 
   if (format === '_redirects') {
-    redirects.forEach(r => {
+    redirects.forEach((r) => {
       result += `${r.fromPath} ${r.toPath} ${r.status}` + '\n';
     });
   } else if (format === 'json') {
-    const res: Array<{ from: string, to: string, status: number }> = redirects.map(redirect => ({
-      from: redirect.fromPath,
-      to: redirect.toPath,
-      status: redirect.status,
-    }));
+    const res: Array<{ from: string; to: string; status: number }> =
+      redirects.map((redirect) => ({
+        from: redirect.fromPath,
+        to: redirect.toPath,
+        status: redirect.status,
+      }));
     result = JSON.stringify(res, null, '  ');
   } else {
-    const res = redirects.map(r => {
+    const res = redirects.map((r) => {
       return `[[redirects]]
 from = "${r.fromPath}"
 to = "${r.toPath}"

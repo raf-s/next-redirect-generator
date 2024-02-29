@@ -1,6 +1,6 @@
 {
   "name": "nextjs-to-netlify-redirect-exporter",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "author": "Raf Sz. <raf.sz@icloud.com>",
   "license": "MIT",
   "main": "src/index.ts",
@@ -27,7 +27,8 @@
   ],
   "scripts": {
     "build": "tsup src/index.ts",
-    "dev": "tsup src/index.ts --watch"
+    "dev": "tsup src/index.ts --watch",
+    "prepare": "husky"
   },
   "files": [
     "dist"
@@ -57,5 +58,14 @@
   },
   "dependencies": {
     "yargs": "^17.7.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --max-warnings=355 --fix",
+      "prettier --write"
+    ],
+    "*.{json,gql,graphql,yaml,yml}": [
+      "prettier --write"
+    ]
   }
 }
