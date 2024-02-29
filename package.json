@@ -29,6 +29,7 @@
     "prepare": "husky",
     "build": "tsup src/index.ts --onSuccess \"yarn link:self\"",
     "lint": "eslint --fix",
+    "type-check": "tsc",
     "link:self": "yarn yalc publish --push",
     "release": "yarn build && yarn release-it"
   },
