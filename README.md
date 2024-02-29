@@ -1,3 +1,8 @@
+# This package has moved
+#### This package has been moved to [next-redirects-exporter](https://www.npmjs.com/package/next-redirect-exporter).
+
+---
+
 ### What is this?
 Tool to generate netlify.toml redirects from Next.js dynamic routes in the pages folder.
 
