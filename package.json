@@ -1,6 +1,6 @@
 {
   "name": "nextjs-to-netlify-redirect-exporter",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "author": "Raf Sz. <raf.sz@icloud.com>",
   "license": "MIT",
   "main": "src/index.ts",
@@ -26,9 +26,11 @@
     "rewrites"
   ],
   "scripts": {
-    "build": "tsup src/index.ts",
-    "dev": "tsup src/index.ts --watch",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build": "tsup src/index.ts --onSuccess \"yarn link:self\"",
+    "lint": "eslint --fix",
+    "link:self": "yarn yalc publish --push",
+    "release": "yarn build && yarn release-it"
   },
   "files": [
     "dist"
@@ -57,15 +59,29 @@
     "yalc": "^1.0.0-pre.53"
   },
   "dependencies": {
+    "nextjs-to-netlify-redirect-exporter": "file:.yalc/nextjs-to-netlify-redirect-exporter",
     "yargs": "^17.7.2"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --max-warnings=355 --fix",
+      "eslint --max-warnings=0 --fix",
       "prettier --write"
     ],
     "*.{json,gql,graphql,yaml,yml}": [
       "prettier --write"
     ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): v${version}",
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true,
+      "comments": true
+    },
+    "npm": {
+      "publish": false
+    }
   }
 }
