@@ -20,6 +20,9 @@ jobs:
           node-version: lts/*
           cache: 'yarn'
 
+      - name: Make example work
+        run: yarn link:self
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
