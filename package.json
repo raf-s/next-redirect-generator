@@ -29,7 +29,7 @@
     "prepare": "husky",
     "build": "tsup src/index.ts --onSuccess \"yarn yalc:publish\"",
     "lint": "eslint --fix",
-    "type-check": "tsc",
+    "type-check": "tsc src/index.ts --noEmit",
     "yalc:publish": "yarn yalc publish",
     "example": "yarn yalc:publish && cd example/my-app && yarn setup",
     "release": "yarn build && yarn release-it"
