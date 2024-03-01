@@ -30,7 +30,7 @@ Run the command in the root of your Next.js project - the script looks for a `pa
 
 _redirects format.
 
-`npm run next-redirect-generator --format=_redirect"
+`npm run next-redirect-generator --format=_redirect"`
 
 Netlify.toml format.
 
