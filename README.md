@@ -30,16 +30,16 @@ Run the command in the root of your Next.js project - the script looks for a `pa
 
 _redirects format.
 
-`npm run next-redirect-generator --format="_redirect"`
+`npm run next-redirect-generator --format=_redirect"
 
 Netlify.toml format.
 
-`npm run next-redirect-generator --format="netlify.toml"`
+`npm run next-redirect-generator --format=netlify.toml`
 
 JSON format.
 
-`npm run next-redirect-generator --format="json"`
+`npm run next-redirect-generator --format=json`
 
 ### Alternate `pages` directory.
 
-`npm run next-redirect-generator --path="src/pages"` else it will look at the closest `pages` folder in your CWD.
+`npm run next-redirect-generator --path=src/pages` else it will look at the closest `pages` folder in your CWD.
