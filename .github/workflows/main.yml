@@ -26,6 +26,9 @@ jobs:
       - name: Check types
         run: yarn type-check
 
+      - name: Check example
+        run: yarn example
+
       - name: Check linting
         run: yarn lint
 
