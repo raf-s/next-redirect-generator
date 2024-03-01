@@ -1,6 +1,5 @@
 node_modules
 .idea
-example
-src
+examples
 .yalc
 yalc.lock
