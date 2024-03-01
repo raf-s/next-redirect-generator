@@ -1,38 +1,96 @@
 {
-  "name": "nextjs-to-netlify-redirect-exporter",
-  "version": "1.1.1",
-  "main": "index.ts",
-  "repository": "git@github.com:raf-s/nextjs-to-netlify-redirect-exporter.git",
-  "description": "CLI tool to generate netlify.toml redirects from Next.js dynamic routes in pages folder.",
-  "keywords": [
-    "next.js",
-    "ssg",
-    "netlify",
-    "redirect",
-    "dynamic routes"
-  ],
+  "name": "next-redirect-generator",
+  "version": "1.0.0",
   "author": "Raf Sz. <raf.sz@icloud.com>",
   "license": "MIT",
+  "main": "src/index.ts",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:raf-s/next-redirect-generator.git"
+  },
+  "bugs": "https://github.com/raf-s/next-redirect-generator/issues",
+  "description": "Tool to generate redirects from Next.js dynamic routes - for use with next export.",
+  "keywords": [
+    "next.js",
+    "next",
+    "next export",
+    "static export",
+    "SPA",
+    "ssg",
+    "static site generation",
+    "dynamic routes",
+    "netlify",
+    "redirect",
+    "redirects",
+    "rewrite",
+    "rewrites"
+  ],
   "scripts": {
-    "generate": "node dist/cli.js",
-    "build": "tsc"
+    "prepare": "husky",
+    "build": "tsup src/index.ts --onSuccess \"yarn yalc publish\"",
+    "lint": "eslint --fix",
+    "type-check": "tsc src/index.ts --noEmit",
+    "example": "yarn build && cd examples/using-script && yarn setup",
+    "release": "yarn build && yarn release-it"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js"
   },
   "bin": {
-    "nextjs-to-netlify-redirect-exporter": "dist/cli.js"
+    "next-redirect-generator": "bin/next-redirect-generator.js"
   },
   "devDependencies": {
     "@types/node": "^18.15.10",
-    "@types/yargs": "^17.0.24",
+    "@types/yargs": "^17.0.32",
     "@typescript-eslint/eslint-plugin": "^5.57.0",
     "@typescript-eslint/parser": "^5.57.0",
     "eslint": "^8.37.0",
     "eslint-config-prettier": "^8.8.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
     "prettier": "^2.8.7",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.2"
+    "release-it": "^17.1.1",
+    "tsup": "^8.0.2",
+    "typescript": "^5.3.3",
+    "yalc": "^1.0.0-pre.53"
   },
   "dependencies": {
     "yargs": "^17.7.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --max-warnings=0 --fix",
+      "prettier --write"
+    ],
+    "*.{json,gql,graphql,yaml,yml}": [
+      "prettier --write"
+    ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): v${version}",
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true,
+      "comments": true
+    },
+    "npm": {
+      "publish": false
+    }
+  },
+  "resolutions": {
+    "glob-parent": ">=5.1.2",
+    "parse-url": ">=8.1.0",
+    "semver": ">=7.5.2",
+    "trim": ">=0.0.3",
+    "trim-newlines": ">=3.0.1",
+    "yaml": ">=2.2.2"
   }
 }

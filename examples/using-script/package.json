@@ -1,0 +1,27 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "setup": "yarn install && yarn yalc add next-redirect-generator",
+    "build": "next build && node scripts/postBuild.mjs",
+    "start": "next start",
+    "lint": "next lint",
+    "generate:redirects": "next-redirect-generator --format=_redirects"
+  },
+  "dependencies": {
+    "next": "14.1.0",
+    "next-redirect-generator": "file:.yalc/next-redirect-generator",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0",
+    "typescript": "^5",
+    "yalc": "^1.0.0-pre.53"
+  }
+}

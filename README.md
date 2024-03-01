@@ -1,39 +1,45 @@
 ### What is this?
-Tool to generate netlify.toml redirects from Next.js dynamic routes in the pages folder.
+Tool to generate redirects from Next.js dynamic routes in the pages folder. 
+This helps the fringe case of using `next export` with dynamic routes (e.g. you're hosting your SPA statically on Netlify or S3).
 
-### Use case 
-If you are doing a `next export` but you have one or more dynamic routes (eg `/pages/[yourVariable].jsx`) you will end up with files like `[yourVariable].html` inside your `out` folder. Going to this page directly will result in a 404. To deal with this problem we need to set up Netlify redirects which look like:
+### The problem 
+If you are using `next export` but you have one or more dynamic routes (eg `/pages/[yourVariable].jsx`) you will end up with files like `[yourVariable].html` inside your `out` folder. Going to this page directly will result in a 404. To deal with this problem we need to set up Netlify redirects which look like:
 ```
 [[redirects]]
 from = "/:yourVariable
 to = "/[yourVariable].html"
 status = 200
 ```
+
+### The solution
 This tool will autogenerate those and spit them out in the console for you to copy into your Netlify.toml file - for convenience and to eliminate human error.
 
 ### How to run
-Execute using NPX: `npx nextjs-to-netlify-redirect-exporter`
+A) Script: Import the function and run in a post-build script
+The package exposes `generateRedirects()` which can be ran in a node script to automate the process.
+See `examples/using-script/scripts/postBuild.mjs`
 
-or
+B) NPX: Execute using NPX: `npx next-redirect-generator`
 
-Install `yarn add -D nextjs-to-netlify-redirect-exporter` &
-`yarn run nextjs-to-netlify-redirect-exporter`
+C) NPM script: Install `npm add -D next-redirect-generator` &
+`npm run next-redirect-generator`
 
-Run the command in the root of your Next.js project - the script looks for a `pages` folder in your current working directory.
+Run the command in the root of your Next.js project - the script looks for a `pages` folder in your current working directory. Otherwise provide a `--path` argument.
 
-### Examples
+### Output format
 
-1. _redirects file format (stick in your `public` folder).
+_redirects format.
 
-`yarn run nextjs-to-netlify-redirect-exporter --format="_redirect"`
+`npm run next-redirect-generator --format="_redirect"`
 
-2. Netlify.toml file format.
+Netlify.toml format.
 
-`yarn run nextjs-to-netlify-redirect-exporter --format="netlify.toml"`
+`npm run next-redirect-generator --format="netlify.toml"`
 
-3. Alternate `pages` directory.
+JSON format.
 
-`yarn run nextjs-to-netlify-redirect-exporter --path="src/pages"` else it will look at the closes `pages` folder in your CWD.
+`npm run next-redirect-generator --format="json"`
 
-### Important
-Run this at your repo root.
+### Alternate `pages` directory.
+
+`npm run next-redirect-generator --path="src/pages"` else it will look at the closest `pages` folder in your CWD.
