@@ -28,10 +28,13 @@
   ],
   "scripts": {
     "prepare": "husky",
-    "build": "tsup src/index.ts --onSuccess \"yarn yalc publish\"",
+    "build": "tsup src/index.ts",
     "lint": "eslint --fix",
     "type-check": "tsc src/index.ts --noEmit",
-    "example": "yarn build && cd examples/using-script && yarn setup",
+    "yalc:publish": "yarn yalc publish",
+    "example:setup": "yarn build && yarn yalc:publish && cd examples/using-script && yarn setup",
+    "example:run": "cd examples/using-script && yarn generate:redirects",
+    "example:build": "cd examples/using-script && yarn build",
     "release": "yarn build && yarn release-it"
   },
   "files": [
