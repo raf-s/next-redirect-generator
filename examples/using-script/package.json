@@ -1,6 +1,7 @@
 {
-  "name": "my-app",
+  "name": "using-script-example",
   "version": "0.1.0",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "setup": "yarn install && yarn yalc add next-redirect-generator",
